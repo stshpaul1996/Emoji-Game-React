@@ -1,16 +1,3 @@
-/* 
-Quick Tip 
-
-- Use the below function in the EmojiGame Component to shuffle the emojisList every time when an emoji is clicked.
-
-const shuffledEmojisList = () => {
-  const {emojisList} = this.props
-  return emojisList.sort(() => Math.random() - 0.5)
-}
-
-*/
-
-// Write your code here.
 import {Component} from 'react'
 
 import EmojiCard from '../EmojiCard'
@@ -38,8 +25,8 @@ class EmojiGame extends Component {
     return (
       <WinOrLoseCard
         isWon={isWon}
-        onClickPlayAgain={this.resetGame}
         score={clickedEmojisList.length}
+        onClickPlayAgain={this.resetGame}
       />
     )
   }
@@ -48,24 +35,26 @@ class EmojiGame extends Component {
     const {topScore} = this.state
     let newTopScore = topScore
 
-    if (currentScore > topScore) {
+    if (currentScore > newTopScore) {
       newTopScore = currentScore
     }
+
     this.setState({topScore: newTopScore, isGameInProgress: false})
   }
 
   clickEmoji = id => {
     const {emojisList} = this.props
     const {clickedEmojisList} = this.state
-    const isEmojiPresent = clickedEmojisList.includes(id)
+    const isEmojiClicked = clickedEmojisList.includes(id)
     const clickedEmojisLength = clickedEmojisList.length
 
-    if (isEmojiPresent) {
+    if (isEmojiClicked) {
       this.finishGameAndSetTopScore(clickedEmojisLength)
     } else {
-      if (emojisList.length - 1 === clickedEmojisList) {
+      if (clickedEmojisLength === emojisList.length - 1) {
         this.finishGameAndSetTopScore(emojisList.length)
       }
+
       this.setState(prevState => ({
         clickedEmojisList: [...prevState.clickedEmojisList, id],
       }))
@@ -83,10 +72,10 @@ class EmojiGame extends Component {
 
     return (
       <ul className="emojis-list-container">
-        {shuffledEmojisList.map(emojiObject => (
+        {shuffledEmojisList.map(eachEmoji => (
           <EmojiCard
-            key={emojiObject.id}
-            emojiDetails={emojiObject}
+            key={eachEmoji.id}
+            emojiDetails={eachEmoji}
             clickEmoji={this.clickEmoji}
           />
         ))}
@@ -95,16 +84,16 @@ class EmojiGame extends Component {
   }
 
   render() {
-    const {clickedEmojisList, isGameInProgress, topScore} = this.state
+    const {clickedEmojisList, topScore, isGameInProgress} = this.state
 
     return (
-      <div className="app-container">
+      <div className="main-container">
         <NavBar
-          currentScore={clickedEmojisList.length}
-          isGameInProgress={isGameInProgress}
           topScore={topScore}
+          isGameInProgress={isGameInProgress}
+          currentScore={clickedEmojisList.length}
         />
-        <div className="emoji-game-body">
+        <div className="emoji-body-container">
           {isGameInProgress ? this.renderEmojisList() : this.renderScoreCard()}
         </div>
       </div>
